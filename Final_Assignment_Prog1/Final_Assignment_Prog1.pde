@@ -17,6 +17,8 @@ int snowballTimer = 0;
 int snowballInterval = 90;
 float snowballSpeed = 5;
 
+boolean lost = false;
+
 void setup() {
   size(800, 600);
 
@@ -30,14 +32,22 @@ void setup() {
 void draw() {
   background(#C6F0FF); // light blue background color
 
+if (!lost){
   movePlayer();
   updateSnowballs();
   spawnSnowballs();
-  
+  checkPlayerHit();
+}
+
   // draw player
   noStroke();
   fill(#D189FF); // purple player 
   ellipse(playerPos.x, playerPos.y, 40, 40);
+  //display game over screen
+   if (lost) {
+    fill(255, 0, 0, 150);
+    rect(0, 0, width, height);
+  }
 }
 //move player using wasd
 void movePlayer() {
@@ -78,7 +88,7 @@ void movePlayer() {
 }
 
 void updateSnowballs() {
-  for (int i = 0; i < snowballs.size(); i++) {
+  for (int i = snowballs.size() - 1; i >= 0; i--) {
     Snowball s = snowballs.get(i);
     s.update();
     s.display();
@@ -125,7 +135,18 @@ void spawnSnowballs() {
     snowballTimer = 0;
   }
 }
+//check collision 
+void checkPlayerHit() {
+  for (int i = 0; i < snowballs.size(); i++) {
+    Snowball s = snowballs.get(i);
 
+    float d = dist(playerPos.x, playerPos.y, s.pos.x, s.pos.y);
+//game over is hit
+    if (d < 20 + s.size/2) {
+      lost = true;
+    }
+  }
+}
 void keyPressed() {
   if (key == 'w') wPressed = true;
   if (key == 'a') aPressed = true;
