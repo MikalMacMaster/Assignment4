@@ -11,6 +11,7 @@ boolean aPressed;
 boolean sPressed;
 boolean dPressed;
 
+
 void setup() {
   size(800, 600);
 
@@ -20,10 +21,10 @@ void setup() {
 }
 
 void draw() {
-  background(#A5FBFF); // light blue background color
+  background(#C4FDFF); // light blue background color
 
   movePlayer();
-
+ 
   // draw player
   noStroke();
   fill(#0036A0); // dark blue player 
@@ -47,6 +48,24 @@ void movePlayer() {
   playerVel.limit(maxSpeed);
   playerVel.mult(friction);
   playerPos.add(playerVel);
+
+// keep player inside the screen
+  if (playerPos.x < 20) {
+    playerPos.x = 20;
+    playerVel.x = 0;
+  }
+  if (playerPos.x > width - 20) {
+    playerPos.x = width - 20;
+    playerVel.x = 0;
+  }
+  if (playerPos.y < 20) {
+    playerPos.y = 20;
+    playerVel.y = 0;
+  }
+  if (playerPos.y > height - 20) {
+    playerPos.y = height - 20;
+    playerVel.y = 0;
+  }
 }
 
 void keyPressed() {
