@@ -3,7 +3,7 @@ PVector playerVel;  // player velocity
 PVector playerAcc;  // player acceleration
 //movement settings
 float accelAmount = 0.12;
-float maxSpeed = 4;
+float maxSpeed = 3;
 float friction = 0.98;
 //key inputs
 boolean wPressed;
@@ -12,6 +12,10 @@ boolean sPressed;
 boolean dPressed;
 
 ArrayList<Snowball> snowballs;
+//snowball spawn timing
+int snowballTimer = 0;
+int snowballInterval = 90;
+float snowballSpeed = 5;
 
 void setup() {
   size(800, 600);
@@ -21,7 +25,6 @@ void setup() {
   playerAcc = new PVector(0, 0);
   
   snowballs = new ArrayList<Snowball>();
-  snowballs.add(new Snowball(100, 100, new PVector(3, 0)));
 }
 
 void draw() {
@@ -29,6 +32,7 @@ void draw() {
 
   movePlayer();
   updateSnowballs();
+  spawnSnowballs();
   
   // draw player
   noStroke();
@@ -78,6 +82,43 @@ void updateSnowballs() {
     Snowball s = snowballs.get(i);
     s.update();
     s.display();
+  }
+}
+//spawn snowballs from edges
+void spawnSnowballs() {
+  snowballTimer++;
+
+  if (snowballTimer >= snowballInterval) {
+    float x = 0;
+    float y = 0;
+    float edge = 10;
+
+    int side = int(random(4));
+    PVector dir;
+
+    if (side == 0) {
+      x = edge;
+      y = random(edge, height - edge);
+      dir = new PVector(1, random(-1, 1));
+    } else if (side == 1) {
+      x = width - edge;
+      y = random(edge, height - edge);
+      dir = new PVector(-1, random(-1, 1));
+    } else if (side == 2) {
+      x = random(edge, width - edge);
+      y = edge;
+      dir = new PVector(random(-1, 1), 1);
+    } else {
+      x = random(edge, width - edge);
+      y = height - edge;
+      dir = new PVector(random(-1, 1), -1);
+    }
+
+    dir.normalize();
+    dir.mult(snowballSpeed);
+
+    snowballs.add(new Snowball(x, y, dir));
+    snowballTimer = 0;
   }
 }
 
