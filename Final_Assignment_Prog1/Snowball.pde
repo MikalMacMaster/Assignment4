@@ -19,4 +19,12 @@ class Snowball {
     stroke(180);
     ellipse(pos.x, pos.y, size, size);
   }
+  //remove snowballs when they go off screen
+    boolean offScreen() {
+    if (pos.x < -size || pos.x > width + size || pos.y < -size || pos.y > height + size) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

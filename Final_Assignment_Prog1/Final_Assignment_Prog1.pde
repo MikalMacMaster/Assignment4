@@ -82,6 +82,10 @@ void updateSnowballs() {
     Snowball s = snowballs.get(i);
     s.update();
     s.display();
+    
+     if (s.offScreen()) {  //remove snowballs when they go off screen
+      snowballs.remove(i);
+    }
   }
 }
 //spawn snowballs from edges
