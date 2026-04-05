@@ -11,6 +11,7 @@ boolean aPressed;
 boolean sPressed;
 boolean dPressed;
 
+ArrayList<Snowball> snowballs;
 
 void setup() {
   size(800, 600);
@@ -18,16 +19,20 @@ void setup() {
   playerPos = new PVector(width/2, height/2);  // start player in center
   playerVel = new PVector(0, 0);
   playerAcc = new PVector(0, 0);
+  
+  snowballs = new ArrayList<Snowball>();
+  snowballs.add(new Snowball(100, 100, new PVector(3, 0)));
 }
 
 void draw() {
-  background(#C4FDFF); // light blue background color
+  background(#C6F0FF); // light blue background color
 
   movePlayer();
- 
+  updateSnowballs();
+  
   // draw player
   noStroke();
-  fill(#0036A0); // dark blue player 
+  fill(#D189FF); // purple player 
   ellipse(playerPos.x, playerPos.y, 40, 40);
 }
 //move player using wasd
@@ -65,6 +70,14 @@ void movePlayer() {
   if (playerPos.y > height - 20) {
     playerPos.y = height - 20;
     playerVel.y = 0;
+  }
+}
+
+void updateSnowballs() {
+  for (int i = 0; i < snowballs.size(); i++) {
+    Snowball s = snowballs.get(i);
+    s.update();
+    s.display();
   }
 }
 
