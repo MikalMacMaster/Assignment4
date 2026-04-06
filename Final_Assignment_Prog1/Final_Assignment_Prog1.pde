@@ -12,10 +12,14 @@ boolean sPressed;
 boolean dPressed;
 
 ArrayList<Snowball> snowballs;
+ArrayList<Coin> coins;
 //snowball spawn timing
 int snowballTimer = 0;
 int snowballInterval = 90;
 float snowballSpeed = 5;
+
+int coinTimer = 0;
+int coinInterval = 180;
 
 boolean lost = false;
 
@@ -27,6 +31,7 @@ void setup() {
   playerAcc = new PVector(0, 0);
   
   snowballs = new ArrayList<Snowball>();
+  coins = new ArrayList<Coin>();
 }
 
 void draw() {
@@ -36,9 +41,11 @@ if (!lost){
   movePlayer();
   updateSnowballs();
   spawnSnowballs();
+  spawnCoins();
   checkPlayerHit();
 }
 
+displayCoins();
   // draw player
   noStroke();
   fill(#D189FF); // purple player 
@@ -135,6 +142,26 @@ void spawnSnowballs() {
     snowballTimer = 0;
   }
 }
+
+void spawnCoins() {
+  coinTimer++;
+
+  if (coinTimer >= coinInterval) {
+    float x = random(30, width - 30);
+    float y = random(30, height - 30);
+
+    coins.add(new Coin(x, y));
+    coinTimer = 0;
+  }
+}
+
+void displayCoins() {
+  for (int i = 0; i < coins.size(); i++) {
+    Coin c = coins.get(i);
+    c.display();
+  }
+}
+
 //check collision 
 void checkPlayerHit() {
   for (int i = 0; i < snowballs.size(); i++) {
