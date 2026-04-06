@@ -15,13 +15,17 @@ ArrayList<Snowball> snowballs;
 ArrayList<Coin> coins;
 //snowball spawn timing
 int snowballTimer = 0;
-int snowballInterval = 90;
-float snowballSpeed = 5;
-
+int snowballInterval = 40;
+float snowballSpeed = 6;
+//coin spawn timing
 int coinTimer = 0;
-int coinInterval = 180;
+int coinInterval = 270;
+
+int coinCount = 0;
+int coinsToWin = 5;
 
 boolean lost = false;
+boolean won = false;
 
 void setup() {
   size(800, 600);
@@ -29,7 +33,7 @@ void setup() {
   playerPos = new PVector(width/2, height/2);  // start player in center
   playerVel = new PVector(0, 0);
   playerAcc = new PVector(0, 0);
-  
+
   snowballs = new ArrayList<Snowball>();
   coins = new ArrayList<Coin>();
 }
@@ -37,28 +41,42 @@ void setup() {
 void draw() {
   background(#C6F0FF); // light blue background color
 
-if (!lost){
-  movePlayer();
-  updateSnowballs();
-  spawnSnowballs();
-  spawnCoins();
-  checkPlayerHit();
-}
+  if (!lost && !won) {
+    movePlayer();
+    updateSnowballs();
+    spawnSnowballs();
+    updateCoins();
+    spawnCoins();
+    checkPlayerHit();
+    checkWin();
+  }
 
-displayCoins();
+  displayCoins();
   // draw player
   noStroke();
-  fill(#D189FF); // purple player 
+  fill(#D189FF); // purple player
   ellipse(playerPos.x, playerPos.y, 40, 40);
+
   //display game over screen
-   if (lost) {
+  if (lost) {
     fill(255, 0, 0, 150);
     rect(0, 0, width, height);
+    
+    fill(255);
+    text("Press R to Restart", width/2 - 40, height/2);
+  }
+  //display win screen
+  if (won) {
+    fill(0, 255, 0, 150);
+    rect(0, 0, width, height);
+    
+    fill(255);
+    text("Press R to Restart", width/2 - 40, height/2);
   }
 }
 //move player using wasd
 void movePlayer() {
-  playerAcc.set(0, 0);
+  playerAcc = new PVector(0, 0);
 
   if (wPressed) playerAcc.y = -1;
   if (sPressed) playerAcc.y = 1;
@@ -75,7 +93,7 @@ void movePlayer() {
   playerVel.mult(friction);
   playerPos.add(playerVel);
 
-// keep player inside the screen
+  // keep player inside the screen
   if (playerPos.x < 20) {
     playerPos.x = 20;
     playerVel.x = 0;
@@ -99,8 +117,8 @@ void updateSnowballs() {
     Snowball s = snowballs.get(i);
     s.update();
     s.display();
-    
-     if (s.offScreen()) {  //remove snowballs when they go off screen
+
+    if (s.offScreen()) {  //remove snowballs when they go off screen
       snowballs.remove(i);
     }
   }
@@ -143,6 +161,19 @@ void spawnSnowballs() {
   }
 }
 
+void updateCoins() {
+  for (int i = coins.size() - 1; i >= 0; i--) {
+    Coin c = coins.get(i);
+
+    float d = dist(playerPos.x, playerPos.y, c.x, c.y);
+
+    if (d < 20 + c.size/2) {
+      coins.remove(i);
+      coinCount++;
+    }
+  }
+}
+
 void spawnCoins() {
   coinTimer++;
 
@@ -162,25 +193,53 @@ void displayCoins() {
   }
 }
 
-//check collision 
+//check collision
 void checkPlayerHit() {
   for (int i = 0; i < snowballs.size(); i++) {
     Snowball s = snowballs.get(i);
 
     float d = dist(playerPos.x, playerPos.y, s.pos.x, s.pos.y);
-//game over is hit
+    //game over is hit
     if (d < 20 + s.size/2) {
       lost = true;
     }
   }
 }
-void keyPressed() {
-  if (key == 'w') wPressed = true;
-  if (key == 'a') aPressed = true;
-  if (key == 's') sPressed = true;
-  if (key == 'd') dPressed = true;
+
+void checkWin() {
+  if (coinCount >= coinsToWin) {
+    won = true;
+  }
 }
 
+void restartGame() {
+  playerPos = new PVector(width/2, height/2);
+  playerVel = new PVector(0, 0);
+  playerAcc = new PVector(0, 0);
+
+  snowballs = new ArrayList<Snowball>();
+  coins = new ArrayList<Coin>();
+
+  snowballTimer = 0;
+  coinTimer = 0;
+  coinCount = 0;
+
+  lost = false;
+  won = false;
+}
+
+void keyPressed() {
+  if (lost || won) {
+    if (key == 'r') {
+      restartGame();
+    }
+  } else {
+    if (key == 'w') wPressed = true;
+    if (key == 'a') aPressed = true;
+    if (key == 's') sPressed = true;
+    if (key == 'd') dPressed = true;
+  }
+}
 void keyReleased() {
   if (key == 'w') wPressed = false;
   if (key == 'a') aPressed = false;

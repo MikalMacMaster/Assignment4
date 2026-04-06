@@ -7,7 +7,7 @@ class Snowball {
   Snowball(float x, float y, PVector startVel) {
     pos = new PVector(x, y);
     vel = new PVector(startVel.x, startVel.y);
-    size = random(20, 80);
+    size = random(20, 100);
   }
 //move snowball
   void update() {
